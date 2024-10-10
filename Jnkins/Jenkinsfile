@@ -1,0 +1,35 @@
+pipeline{
+    agent any
+
+    stages{
+        stage('Build')
+        {
+            steps{
+                sh 'mvn -B -DskipTests clean package'
+            }
+        }
+
+        stage('Test')
+        {
+            steps{
+                sh 'mvn test'
+            }
+
+            
+
+            post{
+                always{
+                    junit 'target/surefire-reports/*.xml'
+                    sh 'junit-viewer --results=target/surefire-reports --save=reports.html'
+                }
+            }
+        }
+         stage('Clean and Package') {
+            steps {
+                // Clean and package the project
+                sh 'mvn clean package'
+            }
+        }
+
+    }
+}
